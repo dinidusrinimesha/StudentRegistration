@@ -1,3 +1,10 @@
+<?php
+    require './database/db.php';
+
+    $sql = "SELECT * FROM students";
+    $result = mysqli_query($conn, $sql);
+?>
+
 <table class="shadow-sm rounded table table-bordered table-striped table-hover">
     <thead class="text-center">
         <tr>
@@ -9,53 +16,49 @@
             <th scope="col">Actions</th>
         </tr>
     </thead>
+    
     <tbody>
         <?php 
-            if($result) {
-                mysqli_fetch_all($result);
-            }
-            else {
-                echo "No data";
-            }
-        
-            die();
-        
+        if(mysqli_num_rows($result) > 0){
+            while($row = mysqli_fetch_assoc($result)){ 
         ?>
+
         <tr>
-            <th scope="row">1</th>
-            <td>Sunil</td>
-            <td>Perera</td>
-            <td>sunil@gmail.com</td>
-            <td>0112 123 123</td>
+            <th scope="row"><?= $row['id']?></th>
+            <td><?= $row['first_name']?></td>
+            <td><?= $row['last_name']?></td>
+            <td><?= $row['email']?></td>
+            <td><?= $row['contact_no']?></td>
             <td>
-                <span id="view-btn" class="badge bg-primary me-1" data-bs-toggle="modal" data-bs-target="#viewStuModel">View</span>
-                <span id="edit-btn" class="badge bg-warning me-1">Edit</span>
-                <span id="delete-btn" class="badge bg-danger me-1">Delete</span>
+                <form action="./controllers/studentController.php" method="POST" class="d-inline">
+                    <input type="hidden" name="action" value="view">
+                    <input type="hidden" name="stu_id" value="<?= $row['id'] ?>">
+                    <button type="submit" class="badge bg-primary border-0">
+                        View
+                    </button>
+                </form> 
+                <form action="./controllers/studentController.php" method="POST" class="d-inline">
+                    <input type="hidden" name="action" value="edit_form">
+                    <input type="hidden" name="stu_id" value="<?= $row['id'] ?>">
+                    <button type="submit" class="badge bg-warning border-0">
+                        Edit
+                    </button>
+                </form> 
+                <form action="./controllers/studentController.php" method="POST" class="d-inline">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="stu_id" value="<?= $row['id'] ?>">
+                    <button type="submit" class="badge bg-danger border-0">
+                        Delete
+                    </button>
+                </form> 
             </td>
         </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Sunil</td>
-            <td>Perera</td>
-            <td>sunil@gmail.com</td>
-            <td>0112 123 123</td>
-            <td>
-                <span id="view-btn" class="badge bg-primary me-1">View</span>
-                <span id="edit-btn" class="badge bg-warning me-1">Edit</span>
-                <span id="delete-btn" class="badge bg-danger me-1">Delete</span>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Sunil</td>
-            <td>Perera</td>
-            <td>sunil@gmail.com</td>
-            <td>0112 123 123</td>
-            <td>
-                <span id="view-btn" class="badge bg-primary me-1" data-bs-toggle="modal" data-bs-target="#addNewStuModel">View</span>
-                <span id="edit-btn" class="badge bg-warning me-1">Edit</span>
-                <span id="delete-btn" class="badge bg-danger me-1">Delete</span>
-            </td>
-        </tr>
+
+        <?php 
+            }
+        } else {
+            echo "<td colspan='6' class='text-center'> No Students Found </td>";
+        } 
+        ?>
     </tbody>
 </table>

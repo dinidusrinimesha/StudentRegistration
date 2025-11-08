@@ -2,10 +2,6 @@
     // Define Constants
     define("SYS_NAME", "Student Management System");
     define("SYS_ROOT", "http://127.0.0.1/StudentRegistration");
-
-    // Require View Models
-    require 'views/add_new_stu.view.php';
-    require 'views/view_stu.view.php';
 ?>
 
 <!doctype html>
@@ -32,6 +28,7 @@
         #view_stu_form input:hover {
             cursor: no-drop;
         }
+
     </style>
 
     <title><?= SYS_NAME ?></title>
