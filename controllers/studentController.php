@@ -1,113 +1,134 @@
-<?php
+<?php 
 session_start();
-if($_SERVER["REQUEST_METHOD"] === "POST" ) {
-    require_once "../database/db.php";
-    require_once "../database/models/student.php";
+require_once __DIR__ . "/../database/db.php";
+require_once __DIR__ .  "/../models/Student.php";
 
-    $action = htmlspecialchars(trim($_POST["action"]));
+function getAllStudents() {
+    $student = new Student();
+    return $student->getAll();
+}
 
-    // Error Handling
-    // Check empty inputs
-    function isInputEmpty($first_name, $email, $contact_no, $address_line_1) {
-        if(empty($first_name) || empty($email) || empty($contact_no) || empty($address_line_1)){
-            return true;
+function isEmptyInput($first_name, $email, $contact_no, $address_line_1) {
+    if(empty($first_name)) {
+        $_SESSION["error"] = "First name is required.";
+        return true;
+    } else if(empty($email)) {
+        $_SESSION["error"] = "Email is required.";
+        return true;
+    } else if(empty($contact_no)) {
+        $_SESSION["error"] = "Contact Number is required.";
+        return true;
+    } else if(empty($address_line_1)) {
+        $_SESSION["error"] = "Address is required.";
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function isValidEmail($email) {
+    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return true;
+    } else {
+        $_SESSION["error"] = "Please enter a valid email address.";
+        return false;
+    }
+}
+
+function addStudent($student, $first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2, $address_line_3) {
+    if(!isEmptyInput($first_name, $email, $contact_no, $address_line_1) && isValidEmail($email)) {
+        if(!$student->isEmailUsed($email)) {
+            $student->addNew($first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2, $address_line_3);
+            $_SESSION['success'] = "New student added successfully.";
         } else {
-            return false;
+            $_SESSION["error"] = "This email address is already in use.";
         }
     }
+}
 
-    // Chekc email format
-    function isValidEmail($email) {
-        if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return true;
+function viewStudent($id) {
+    $student = new Student();
+    return $student->view($id);
+}
+
+function editStudent($student, $id, $first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2, $address_line_3) {
+    if(!isEmptyInput($first_name, $email, $contact_no, $address_line_1) && isValidEmail($email)) {
+        if(!$student->isEmailUsed($email)) {
+            $update = $student->update($id, $first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2, $address_line_3);
+            return $update;
         } else {
-            return false;
+            $_SESSION["error"] = "This email address is already in use.";
+            $update = false;
+            return $update;
         }
     }
+}
 
-    // Add/Update student
-    if($action === "add" || $action === "update") {
-        $first_name     = htmlspecialchars(trim($_POST["first_name"]));
-        $last_name      = htmlspecialchars(trim($_POST["last_name"]));
-        $email          = htmlspecialchars(trim($_POST["email"]));
-        $contact_no     = htmlspecialchars(trim($_POST["contact_no"]));
-        $address_line_1 = htmlspecialchars(trim($_POST["address_line_1"]));
-        $address_line_2 = htmlspecialchars(trim($_POST["address_line_2"]));
-        $address_line_3 = htmlspecialchars(trim($_POST["address_line_3"]));
+function deleteStudent($id) {
+    $student = new Student();
+    return $student->delete($id);
+}
 
-        // Add Student
-        if($action === "add"){
-            if(isInputEmpty($first_name, $email, $contact_no, $address_line_1)) {
-                $_SESSION['error'] = "Fill all required inputs!";
-                header("Location:../index.php?error?fill-all-required-fields");
-            }
-            else if(!isValidEmail($email)) {
-                $_SESSION['error'] = "Please insert valid Email!";
-                header("Location:../index.php?error?invalid-email");
-            }
-            else if(isEmailUsed($email)) {
-                $_SESSION['error'] = "This email is already taken!";
-                header("Location:../index.php?error?email-already-taken");
-            }
-            else {
-                $stuAdd = addStudent($first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2,$address_line_3);
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+    $action = htmlspecialchars(trim($_POST['action']));
+    $student = new Student();
 
-                if($stuAdd) {
-                    $_SESSION['success'] = "New student added";
-                    header("Location:../index.php?success");
-                } else {
-                    $_SESSION['error'] = "Error with inserting";
-                    header("Location:../index.php?error");
-                }
-            }
-        // Update Student
-        } else {
-            $stu_id = htmlspecialchars(trim($_POST["stu_id"]));
+    // Handle actions adn run logics
+    switch($action) {
+        case 'add':
+            $first_name     = htmlspecialchars(trim($_POST['first_name']));
+            $last_name      = htmlspecialchars(trim($_POST['last_name']));
+            $email          = htmlspecialchars(trim($_POST['email']));
+            $contact_no     = htmlspecialchars(trim($_POST['contact_no']));
+            $address_line_1 = htmlspecialchars(trim($_POST['address_line_1']));
+            $address_line_2 = htmlspecialchars(trim($_POST['address_line_2']));
+            $address_line_3 = htmlspecialchars(trim($_POST['address_line_3']));
+            
+            addStudent($student, $first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2, $address_line_3);
+            header('Location: ../index.php?student-added');
+            break;
 
-            if(isInputEmpty($first_name, $email, $contact_no, $address_line_1)) {
-                $_SESSION['error'] = "Fill all required inputs!";
-                header("Location:../views/edit_stu.view.php?error?fill-all-required-fields");
-            }
-            else if(!isValidEmail($email)) {
-                $_SESSION['error'] = "Please insert valid Email!";
-                header("Location:../views/edit_stu.view.php?error?invalid-email");
-            }
-            else {
-                $stuUpdate = updateStudent($stu_id, $first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2,$address_line_3);
+        case 'edit_form':
+        case 'view':
+            $id = htmlspecialchars(trim($_POST['stu_id']));
 
-                if($stuUpdate) {
-                    $_SESSION['update_success'] = "Student data updated!";
-                    header("Location:../index.php");
-                } else {
-                    $_SESSION['error'] = "Error with updating";
-                    header("Location:../views/edit_stu.view.php?error");
-                }
+            $action == 'view' ? 
+                header('Location: ../views/student/view_stu.view.php?id=' . $id) :
+                header('Location: ../views/student/edit.view.php?id=' . $id) ;
+            break;
+
+        case 'delete':
+            $id = htmlspecialchars(trim($_POST['stu_id']));
+            if(deleteStudent($id)) {
+                $_SESSION['delete_success'] = "Student Deleted Successfully.";
+                header('Location: ../index.php?success&student-deleted');
+            } else {
+                $_SESSION['delete_error'] = "Error with deletion";
+                header('Location: ../index.php?error');
             }
-        }
+            break;
+
+        case 'update':
+            $stu_id         = htmlspecialchars(trim($_POST['stu_id']));
+            $first_name     = htmlspecialchars(trim($_POST['first_name']));
+            $last_name      = htmlspecialchars(trim($_POST['last_name']));
+            $email          = htmlspecialchars(trim($_POST['email']));
+            $contact_no     = htmlspecialchars(trim($_POST['contact_no']));
+            $address_line_1 = htmlspecialchars(trim($_POST['address_line_1']));
+            $address_line_2 = htmlspecialchars(trim($_POST['address_line_2']));
+            $address_line_3 = htmlspecialchars(trim($_POST['address_line_3']));
+
+            $edit = editStudent($student, $stu_id, $first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2, $address_line_3);
+            if($edit) {
+                $_SESSION['success'] = "Student details updated successfully.";
+                header('Location: ../views/student/edit.view.php?id=' . $stu_id);
+            } else {
+                $_SESSION['error'] = "Error updating.";
+                header('Location: ../views/student/edit.view.php?id=' . $stu_id);
+            }
+            break;
+
+        default:
+            echo 'Something went wrong!';
     }
-
-    // View/Load-Edit-Form
-    if($action === "view" || $action === "edit_form"){
-        $stu_id = htmlspecialchars(trim($_POST["stu_id"]));
-        $studentData = getStudent($stu_id);
-        $_SESSION['student_data'] = $studentData;
-
-        // View Student
-        if($action === "view") {
-            header("Location: ../views/view_stu.view.php");
-        }
-        // Load Edit Form
-        else{
-            header("Location: ../views/edit_stu.view.php");
-        }
-    }
-
-    // Delete Student
-    if($action === "delete"){
-        var_dump("Delete ID : $stu_id");
-    }
-
-} else {
-    header("Location: ../index.php");
-    die();
 }

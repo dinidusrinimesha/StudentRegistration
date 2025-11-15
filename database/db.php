@@ -1,14 +1,17 @@
 <?php
+class Database{
+    private $servername = "localhost";
+    private $username = "root";
+    private $pwd = "";
+    private $dbname = "sms_db";
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "sms_db";
+    protected function connect() {
+        $conn = new mysqli($this->servername, $this->username, $this->pwd, $this->dbname);
 
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+        if ($conn -> connect_error) {
+          die("Connection failed: " . $conn -> connect_error);
+        }
 
-if (!$conn) {
-  die("Connection failed: " . mysqli_connect_error());
+        return $conn;
+    }
 }
-
-// mysqli_close($conn);

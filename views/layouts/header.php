@@ -28,7 +28,6 @@
         #view_stu_form input:hover {
             cursor: no-drop;
         }
-
     </style>
 
     <title><?= SYS_NAME ?></title>
