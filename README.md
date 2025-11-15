@@ -25,6 +25,7 @@ Open your terminal and clone the project:
 
 ```bash
 git clone https://github.com/dinidusrinimesha/StudentRegistration.git
+```
 
 ### 2️⃣ Move the Project to Server (htdocs) Directory
 
@@ -34,9 +35,11 @@ In Visual Studio Code terminal, execute:
 
 ```bash
 cd database/init/createDb.php
+```
 
 ```bash
 cd database/init/createTable.php
+```
 
 ### 4️⃣ Start Your Local Server
 
