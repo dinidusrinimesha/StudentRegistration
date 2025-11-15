@@ -19,31 +19,40 @@ This project demonstrates a clean structure and full CRUD operations (Create, Re
 
 Follow the steps below to set up this project on your local server:
 
-### 1️⃣ Clone the Repository
+### 1️⃣ Open your htdocs file
 
-Open your terminal and clone the project:
+Open your htdocs and open the terminal in;
+
+```bash
+C:\xampp\htdocs
+```
+
+### 2️⃣ Clone the project in htdocs
+
+Clone the project with the command;
 
 ```bash
 git clone https://github.com/dinidusrinimesha/StudentRegistration.git
 ```
 
-### 2️⃣ Move the Project to Server (htdocs) Directory
+### 3️⃣ Open the project in Code Editor
 
-Move the commited folder to the htdocs folder if you are using xampp
-```bash
-C:\xampp\htdocs
-```
+Go to the project folder and open it with Visual Studio Code.
 
-### 3️⃣ Run Database Initialization Script
+### 3️⃣ Run Database Initialization Scripts
 
-In Visual Studio Code terminal, execute:
+In Visual Studio Code, open terminal and execute:
 
 ```bash
-cd database/init/createDb.php
+cd database\init
 ```
 
 ```bash
-cd database/init/createTable.php
+php createDb.php
+```
+
+```bash
+php createTable.php
 ```
 
 ### 4️⃣ Start Your Local Server
