@@ -29,6 +29,11 @@ git clone https://github.com/dinidusrinimesha/StudentRegistration.git
 
 ### 2️⃣ Move the Project to Server (htdocs) Directory
 
+Move the commited folder to the htdocs folder if you are using xampp
+```bash
+C:\xampp\htdocs
+```
+
 ### 3️⃣ Run Database Initialization Script
 
 In Visual Studio Code terminal, execute:
@@ -44,3 +49,5 @@ cd database/init/createTable.php
 ### 4️⃣ Start Your Local Server
 
 Start your server(apache, mysql) and run the project.
+
+---
