@@ -40,9 +40,13 @@ function addStudent($student, $first_name, $last_name, $email, $contact_no, $add
         if(!$student->isEmailUsed($email)) {
             $student->addNew($first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2, $address_line_3);
             $_SESSION['success'] = "New student added successfully.";
+            header('Location: ../index.php?student-added');
         } else {
             $_SESSION["error"] = "This email address is already in use.";
+            header('Location: ../views/student/add_new_stu.view.php?error');
         }
+    } else {
+        header('Location: ../views/student/add_new_stu.view.php?error');
     }
 }
 
@@ -85,7 +89,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             $address_line_3 = htmlspecialchars(trim($_POST['address_line_3']));
             
             addStudent($student, $first_name, $last_name, $email, $contact_no, $address_line_1, $address_line_2, $address_line_3);
-            header('Location: ../index.php?student-added');
             break;
 
         case 'edit_form':
